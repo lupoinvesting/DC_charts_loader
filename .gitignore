@@ -17,6 +17,11 @@ venv/
 
 # Data and screenshots folders
 data/
+# Data and screenshots folders
+data/*
+!data/default.feather
+
+!.gitkeep
 screenshots/
 
 # OS files
