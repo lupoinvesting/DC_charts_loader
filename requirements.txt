@@ -1,3 +1,4 @@
 pandas==
 pyarrow==11.0.0
-lightweight_charts
+lightweight_charts==1.0.20
+tqdm

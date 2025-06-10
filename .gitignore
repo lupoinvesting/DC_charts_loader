@@ -16,12 +16,10 @@ venv/
 .vscode/
 
 # Data and screenshots folders
-data/
-# Data and screenshots folders
 data/*
 !data/default.feather
+!data/default_data.feather
 
-!.gitkeep
 screenshots/
 
 # OS files
