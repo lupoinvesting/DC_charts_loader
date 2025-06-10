@@ -15,8 +15,9 @@ venv/
 # VS Code settings
 .vscode/
 
-# Data folder
+# Data and screenshots folders
 data/
+screenshots/
 
 # OS files
 .DS_Store
