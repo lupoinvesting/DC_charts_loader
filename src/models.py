@@ -51,6 +51,7 @@ class ChartsDailyData(ChartsData):
 
     def load_dict(self):
         self.charts = load_daily_df(self.dict_filename)
+        self.charts.sort_values(by="date", ascending=False, inplace=True)
 
     def load_data(self):
         self.data = load_daily_df(self.data_filename)
