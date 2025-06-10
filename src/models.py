@@ -1,0 +1,67 @@
+from abc import ABC
+import pandas as pd
+from typing import Union, Optional
+from .data import load_daily_data, load_daily_df
+
+
+class ChartsData(ABC):
+    def __init__(self, charts):
+        self.charts = charts
+        self.current_index = 0
+
+    def set_index(self, index):
+        self.current_index = index
+
+    def increase_index(self):
+        if self.current_index < len(self.charts) - 1:
+            self.current_index += 1
+        else:
+            self.current_index = 0  # wrap around to the first chart
+        return self.current_index
+
+    def decrease_index(self):
+        if self.current_index > 0:
+            self.current_index -= 1
+        else:
+            self.current_index = len(self.charts) - 1
+            # wrap around to the last chart
+        return self.current_index
+
+    def next_chart(self):
+        return self.load_chart(self.increase_index())
+
+    def previous_chart(self):
+        return self.load_chart(self.decrease_index())
+
+    def load_chart(self, index: Optional[int] = None):
+        raise NotImplementedError("This method should be implemented by subclasses.")
+
+
+class ChartsDailyData(ChartsData):
+    def __init__(self, dict_filename, data_filename):
+        self.charts = []
+        self.current_index = 0
+        self.dict_filename = dict_filename
+        self.data_filename = data_filename
+        self.load_dict()
+        self.load_data()
+
+    def load_dict(self):
+        self.charts = load_daily_df(self.dict_filename)
+
+    def load_data(self):
+        self.data = load_daily_df(self.data_filename)
+
+    def load_chart(self, index: Optional[int] = None) -> tuple[pd.DataFrame, dict]:
+        if index is None:
+            index = self.current_index
+
+        ticker = self.charts.ticker.iloc[index]
+        date = self.charts.date.iloc[index]
+        df = load_daily_data(ticker, date, self.data)
+        metadata = {
+            "ticker": ticker,
+            "date": date,
+            "index": index,
+        }
+        return df, metadata
