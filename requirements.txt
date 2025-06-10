@@ -1,4 +1,5 @@
-pandas==
-pyarrow==11.0.0
+pyarrow==20.0.0
+pandas
 lightweight_charts==1.0.20
 tqdm
+pandera
