@@ -6,9 +6,9 @@ To clone this repository, run the following command in your terminal:
 git clone https://github.com/lupoinvesting/DC_charts_loader.git
 ```
 
+load the files you wish to browse in data folder
 
-
-add the name of the files you wish to see in row 9 of main.py
+enter the name of the file you want to browse (not the _data.feather file) in config.json
 
 
 ## CONTROLLING THE CHARTS

@@ -3,3 +3,4 @@ pandas
 lightweight_charts==1.0.20
 tqdm
 pandera
+pydantic==2.11.5

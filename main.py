@@ -1,13 +1,14 @@
 from src.models import ChartsDailyData
-import pandas as pd
-from lightweight_charts import Chart
-from src.ui import on_up, on_down, plot_chart, save_screenshot, create_and_bind_chart
-import numpy as np
+from src.ui import create_and_bind_chart
+from src.config import config
 
 
 if __name__ == "__main__":
-    dict_filename = "data/default.feather"
-
+    path = config.general.data_path
+    filename = config.general.data_filename
+    dict_filename = f"{path}/{filename}"
+    print(dict_filename)
+    # dict_filename =
     data_filename = dict_filename.replace(".feather", "_data.feather")
 
     chart_data = ChartsDailyData(dict_filename, data_filename)
