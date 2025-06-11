@@ -11,4 +11,5 @@ if __name__ == "__main__":
     data_filename = dict_filename.replace(".feather", "_data.feather")
     chart_data = ChartsDailyData(dict_filename, data_filename)
     chart = create_and_bind_chart(chart_data)
+
     chart.show(block=True)

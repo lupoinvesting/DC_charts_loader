@@ -1,4 +1,5 @@
 from .models import ChartsData
+from .config import config
 from lightweight_charts import Chart
 import pandas as pd
 
@@ -26,6 +27,12 @@ def plot_chart(df: pd.DataFrame, metadata: dict, chart: Chart) -> None:
         )
     except AttributeError:
         chart.watermark(f"na")
+
+
+def plot_line(data: pd.DataFrame, chart: Chart, name: str) -> None:
+
+    line = chart.create_line(name=name)
+    line.set(data)
 
 
 def save_screenshot(chart: Chart, chart_data: ChartsData, folder="screenshots") -> None:
@@ -60,9 +67,26 @@ def create_and_bind_chart(
     chart = Chart()
     df, metadata = chart_data.load_chart(0)
     plot_chart(df, metadata, chart)
+    plot_indicators(df, chart)
 
     # bind hotkeys
     chart.hotkey("shift", 1, func=lambda _: on_up(chart, chart_data))
     chart.hotkey("shift", 2, func=lambda _: on_down(chart, chart_data))
     chart.hotkey("shift", "S", func=lambda _: save_screenshot(chart, chart_data))
     return chart
+
+
+def plot_indicators(df: pd.DataFrame, chart: Chart) -> None:
+    """
+    Plots indicators on the chart.
+    :param df: DataFrame containing the data with indicators.
+    :param chart: The Chart object to plot indicators on.
+    """
+    indicators_list = config.indicators if config.indicators is not None else []
+    for indicator in indicators_list:
+        if indicator.name == "SMA":
+            if indicator.parameters is not None and "period" in indicator.parameters:
+                period = indicator.parameters["period"]
+                col_name = f"SMA_{period}"
+                if col_name in df.columns:
+                    plot_line(df[["date", col_name]], chart, col_name)
