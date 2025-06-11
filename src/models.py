@@ -2,6 +2,34 @@ from abc import ABC
 import pandas as pd
 from typing import Union, Optional
 from .data import load_daily_data, load_daily_df, apply_indicators
+from lightweight_charts import Chart
+
+
+class ChartsWMOverride(Chart):
+    def watermark(
+        self,
+        text: str,
+        font_size: int = 44,
+        color: str = "rgba(180, 180, 200, 0.5)",
+        horz_align: str = "center",
+        vert_align: str = "center",
+    ) -> None:
+        """
+        Adds a watermark to the chart. CUSTOM_OVERRIDE to allow for vertical alignment.
+        """
+        self.run_script(
+            f"""
+          {self.id}.chart.applyOptions({{
+              watermark: {{
+                  visible: true,
+                  fontSize: {font_size},
+                  horzAlign: '{horz_align}',
+                  vertAlign: '{vert_align}',
+                  color: '{color}',
+                  text: '{text}',
+              }}
+          }})"""
+        )
 
 
 class ChartsData(ABC):
