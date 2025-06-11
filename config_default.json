@@ -1,0 +1,7 @@
+{
+    "general": {
+        "version": "1.0.0",
+        "data_path": "./data",
+        "data_filename": "default.feather"
+    }
+}
