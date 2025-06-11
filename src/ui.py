@@ -27,6 +27,7 @@ def plot_chart(df: pd.DataFrame, metadata: dict, chart: Chart) -> None:
         )
     except AttributeError:
         chart.watermark(f"na")
+    chart.legend(visible=True, ohlc=True, lines=True, font_family="arial", font_size=12)
 
 
 def plot_line(data: pd.DataFrame, chart: Chart, name: str) -> None:
