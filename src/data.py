@@ -1,8 +1,10 @@
 import pandas as pd
 from datetime import datetime, timedelta
 import numpy as np
-from src.schemas import dict_schema
 from pandera import check_output
+
+from src.schemas import dict_schema
+from src.config import config
 
 N_DAYS = 30  # Number of days to load for each chart
 
@@ -48,4 +50,19 @@ def load_daily_df(dict_filename: str) -> pd.DataFrame:
     df = df.drop_duplicates(subset=["ticker", "date"])
     df.sort_values(by=["ticker", "date"], inplace=True)
     df.reset_index(drop=True, inplace=True)
+    return df
+
+
+def apply_indicators(df: pd.DataFrame) -> pd.DataFrame:
+    indicators_list = config.indicators if config.indicators is not None else []
+    df_grouped = df.groupby("ticker", observed=True)
+    for indicator in indicators_list:
+        if indicator.name == "SMA":
+            if indicator.parameters is not None and "period" in indicator.parameters:
+                period = indicator.parameters["period"]
+                col_name = f"SMA_{period}"
+                df[col_name] = df_grouped["close"].transform(
+                    lambda x: x.rolling(window=period).mean()
+                )
+
     return df

@@ -60,6 +60,8 @@ def create_and_bind_chart(
     chart = Chart()
     df, metadata = chart_data.load_chart(0)
     plot_chart(df, metadata, chart)
+
+    # bind hotkeys
     chart.hotkey("shift", 1, func=lambda _: on_up(chart, chart_data))
     chart.hotkey("shift", 2, func=lambda _: on_down(chart, chart_data))
     chart.hotkey("shift", "S", func=lambda _: save_screenshot(chart, chart_data))

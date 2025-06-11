@@ -1,7 +1,7 @@
 from abc import ABC
 import pandas as pd
 from typing import Union, Optional
-from .data import load_daily_data, load_daily_df
+from .data import load_daily_data, load_daily_df, apply_indicators
 
 
 class ChartsData(ABC):
@@ -55,6 +55,7 @@ class ChartsDailyData(ChartsData):
 
     def load_data(self):
         self.data = load_daily_df(self.data_filename)
+        self.data = apply_indicators(self.data)
 
     def get_metadata(self, index: int) -> dict:
         ticker = self.charts.ticker.iloc[index]
