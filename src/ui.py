@@ -1,6 +1,6 @@
 from .models import ChartsData
+from .models import ChartsWMOverride as Chart
 from .config import config
-from lightweight_charts import Chart
 import pandas as pd
 
 
@@ -23,11 +23,19 @@ def plot_chart(df: pd.DataFrame, metadata: dict, chart: Chart) -> None:
     chart.set(df)
     try:
         chart.watermark(
-            f"{metadata['ticker']} {metadata['timeframe']} {metadata['date_str']}"
+            f"{metadata['ticker']} {metadata['timeframe']} {metadata['date_str']}",
+            vert_align="top",
         )
     except AttributeError:
         chart.watermark(f"na")
-    chart.legend(visible=True, ohlc=True, lines=True, font_family="arial", font_size=12)
+    chart.legend(
+        visible=True,
+        ohlc=True,
+        lines=True,
+        font_family="arial",
+        font_size=12,
+        percent=False,
+    )
 
 
 def plot_line(data: pd.DataFrame, chart: Chart, name: str) -> None:
