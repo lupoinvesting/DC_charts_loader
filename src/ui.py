@@ -142,29 +142,24 @@ def on_timeframe_change(chart, chart_data, timeframe):
     df, metadata = chart_data.load_chart(chart_data.current_index)
     metadata['timeframe'] = timeframe
     plot_chart(df, metadata, chart)
-    plot_indicators(df, chart)
 
 
 def on_up_dual(chart1, chart2, chart_data1, chart_data2):
     """Navigate to next chart for dual chart setup."""
     df1, metadata1 = chart_data1.next_chart()
     plot_chart(df1, metadata1, chart1)
-    plot_indicators(df1, chart1)
     
     df2, metadata2 = chart_data2.next_chart()
     plot_chart(df2, metadata2, chart2)
-    plot_indicators(df2, chart2)
 
 
 def on_down_dual(chart1, chart2, chart_data1, chart_data2):
     """Navigate to previous chart for dual chart setup."""
     df1, metadata1 = chart_data1.previous_chart()
     plot_chart(df1, metadata1, chart1)
-    plot_indicators(df1, chart1)
     
     df2, metadata2 = chart_data2.previous_chart()
     plot_chart(df2, metadata2, chart2)
-    plot_indicators(df2, chart2)
 
 
 def save_screenshot_dual(chart1, chart2, chart_data1, chart_data2, folder="screenshots"):
