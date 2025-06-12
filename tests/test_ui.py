@@ -48,7 +48,10 @@ class TestPlotChart:
         """Test chart plotting when watermark raises AttributeError."""
         # Create mock chart that raises AttributeError on first call, succeeds on second
         mock_chart = Mock()
-        mock_chart.watermark = Mock(side_effect=[AttributeError("Custom watermark not available"), None])
+        mock_chart.watermark = Mock(side_effect=[
+            TypeError("Custom watermark not available"), 
+            None
+        ])
         mock_chart.legend = Mock()
         
         df = pd.DataFrame({'close': [100, 101, 102]})
@@ -60,10 +63,10 @@ class TestPlotChart:
         
         plot_chart(df, metadata, mock_chart)
         
-        # Should call watermark twice: once with full text (fails), once with "na"
+        # Should call watermark twice: once with vert_align (fails), once without
         assert mock_chart.watermark.call_count == 2
         mock_chart.watermark.assert_any_call('AAPL 1D 2023-01-15', vert_align='top')
-        mock_chart.watermark.assert_any_call('na')
+        mock_chart.watermark.assert_any_call('AAPL 1D 2023-01-15')
 
 
 class TestPlotLine:
