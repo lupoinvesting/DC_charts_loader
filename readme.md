@@ -18,3 +18,10 @@ enter the name of the file you want to browse (not the _data.feather file) in co
 shift + 1 -> next chart
 shift + 2 -> previous chart
 shift + s -> screenshot
+
+
+## TESTING
+test with pytest:
+```bash
+python -m pytest --cov
+```
