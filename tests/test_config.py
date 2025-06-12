@@ -10,19 +10,13 @@ from src.config import GeneralValidator, Indicator, Configuration
 class TestGeneralValidator:
     """Test cases for the GeneralValidator class."""
 
-    def test_valid_general_config(self):
+    def test_valid_general_config(self, sample_config_data):
         """Test creating a valid GeneralValidator instance."""
-        config_data = {
-            "version": "1.0.0",
-            "data_path": "./data",
-            "data_filename": "default.feather"
-        }
-        
-        general = GeneralValidator(**config_data)
+        general = GeneralValidator(**sample_config_data["general"])
         
         assert general.version == "1.0.0"
         assert general.data_path == "./data"
-        assert general.data_filename == "default.feather"
+        assert general.data_filename == "test_data.feather"
 
     def test_missing_required_field(self):
         """Test that missing required fields raise validation error."""

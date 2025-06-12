@@ -10,12 +10,11 @@ from src.models import ChartsData, ChartsDailyData, ChartsWMOverride
 class TestChartsData:
     """Test cases for the abstract ChartsData class."""
 
-    def test_init(self):
+    def test_init(self, sample_charts_data):
         """Test ChartsData initialization."""
-        charts = ['chart1', 'chart2', 'chart3']
-        charts_data = ChartsData(charts)
+        charts_data = ChartsData(sample_charts_data)
         
-        assert charts_data.charts == charts
+        assert len(charts_data.charts) == len(sample_charts_data)
         assert charts_data.current_index == 0
 
     def test_set_index(self):

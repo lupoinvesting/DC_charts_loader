@@ -8,6 +8,8 @@ This directory contains comprehensive unit tests for the DC Charts Loader applic
 - `test_data.py` - Tests for data loading and processing functions
 - `test_models.py` - Tests for chart data models and navigation
 - `test_ui.py` - Tests for UI functions and chart plotting
+- `conftest.py` - Pytest configuration and shared fixtures
+- `fixtures/` - Test data fixtures and sample data generators
 
 ## Running Tests
 
@@ -49,6 +51,29 @@ The test suite achieves 100% code coverage across all source modules:
 - **Data validation testing** using sample datasets
 - **Configuration testing** with various scenarios
 - **UI component testing** with proper mocking
+- **Fixture-based testing** with reusable test data
+- **Temporary file handling** for file I/O testing
+
+## Fixtures
+
+The test suite uses pytest fixtures for consistent and reusable test data:
+
+### Data Fixtures
+- `sample_stock_data` - Realistic stock market data with OHLC values
+- `sample_config_data` - Valid configuration data structure
+- `sample_charts_data` - Chart metadata for navigation testing
+- `sample_stock_data_with_indicators` - Stock data with technical indicators
+
+### File Fixtures
+- `temp_feather_file` - Temporary feather file with sample data
+- `temp_feather_file_with_duplicates` - File with duplicate data for testing deduplication
+- `temp_feather_file_unsorted` - Unsorted data for testing sorting functionality
+- `temp_config_file` - Temporary JSON configuration file
+
+### Mock Fixtures
+- `mock_chart` - Mock chart object for UI testing
+- `mock_chart_data` - Mock chart data with navigation methods
+- `mock_indicator` - Mock indicator configuration
 
 ## Dependencies
 
