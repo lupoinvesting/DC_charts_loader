@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime
 from unittest.mock import Mock, patch, MagicMock
 
-from src.models import ChartsData, ChartsDailyData, ChartsWMOverride
+from src.models import ChartsData, ChartsDailyData, ChartsMinuteData, ChartsWMOverride
 
 
 class TestChartsData:
@@ -313,3 +313,193 @@ class TestChartsWMOverride:
           })"""
         
         chart.run_script.assert_called_once_with(expected_script)
+
+
+class TestChartsMinuteData:
+    """Test cases for the ChartsMinuteData class."""
+
+    @patch('src.models.load_daily_df')
+    @patch('src.models.apply_indicators')
+    def test_init(self, mock_apply_indicators, mock_load_daily_df):
+        """Test ChartsMinuteData initialization."""
+        # Mock the data loading
+        mock_charts_df = pd.DataFrame({
+            'ticker': ['AAPL', 'MSFT'],
+            'date': [datetime(2023, 1, 15), datetime(2023, 1, 16)],
+            'volume': [1000, 2000]
+        })
+        mock_data_df = pd.DataFrame({
+            'ticker': ['AAPL', 'MSFT'],
+            'date': [datetime(2023, 1, 15), datetime(2023, 1, 16)],
+            'close': [150.0, 250.0]
+        })
+        
+        mock_load_daily_df.side_effect = [mock_charts_df, mock_data_df]
+        mock_apply_indicators.return_value = mock_data_df
+        
+        charts_data = ChartsMinuteData("dict.feather", "data.feather")
+        
+        # Verify initialization
+        assert charts_data.current_index == 0
+        assert charts_data.current_timeframe == "1M"
+        assert charts_data.dict_filename == "dict.feather"
+        assert charts_data.data_filename == "data.feather"
+        
+        # Verify data loading was called
+        assert mock_load_daily_df.call_count == 2
+        mock_apply_indicators.assert_called_once_with(mock_data_df)
+
+    @patch('src.models.load_daily_df')
+    @patch('src.models.apply_indicators')
+    def test_set_timeframe(self, mock_apply_indicators, mock_load_daily_df):
+        """Test setting timeframe."""
+        # Mock the data loading
+        mock_charts_df = pd.DataFrame({
+            'ticker': ['AAPL'],
+            'date': [datetime(2023, 1, 15)],
+            'volume': [1000]
+        })
+        mock_data_df = pd.DataFrame({
+            'ticker': ['AAPL'],
+            'date': [datetime(2023, 1, 15)],
+            'close': [150.0]
+        })
+        
+        mock_load_daily_df.side_effect = [mock_charts_df, mock_data_df]
+        mock_apply_indicators.return_value = mock_data_df
+        
+        charts_data = ChartsMinuteData("dict.feather", "data.feather")
+        
+        # Test setting timeframe
+        charts_data.set_timeframe("5M")
+        assert charts_data.current_timeframe == "5M"
+        
+        charts_data.set_timeframe("1H")
+        assert charts_data.current_timeframe == "1H"
+
+    @patch('src.models.load_daily_df')
+    @patch('src.models.apply_indicators')
+    def test_get_metadata(self, mock_apply_indicators, mock_load_daily_df):
+        """Test getting metadata with current timeframe."""
+        # Mock the data loading
+        mock_charts_df = pd.DataFrame({
+            'ticker': ['AAPL', 'MSFT'],
+            'date': [datetime(2023, 1, 15), datetime(2023, 1, 16)],
+            'volume': [1000, 2000]
+        })
+        mock_data_df = pd.DataFrame({
+            'ticker': ['AAPL', 'MSFT'],
+            'date': [datetime(2023, 1, 15), datetime(2023, 1, 16)],
+            'close': [150.0, 250.0]
+        })
+        
+        mock_load_daily_df.side_effect = [mock_charts_df, mock_data_df]
+        mock_apply_indicators.return_value = mock_data_df
+        
+        charts_data = ChartsMinuteData("dict.feather", "data.feather")
+        
+        # Test with default timeframe (data is sorted by date descending, so index 0 is the latest date)
+        metadata = charts_data.get_metadata(0)
+        expected_metadata = {
+            'ticker': 'MSFT',
+            'date_str': '2023-01-16',
+            'date': datetime(2023, 1, 16),
+            'timeframe': '1M',
+            'index': 0
+        }
+        assert metadata == expected_metadata
+        
+        # Test with changed timeframe
+        charts_data.set_timeframe("15M")
+        metadata = charts_data.get_metadata(1)
+        expected_metadata = {
+            'ticker': 'AAPL',
+            'date_str': '2023-01-15',
+            'date': datetime(2023, 1, 15),
+            'timeframe': '15M',
+            'index': 1
+        }
+        assert metadata == expected_metadata
+
+    @patch('src.models.load_daily_data')
+    @patch('src.models.load_daily_df')
+    @patch('src.models.apply_indicators')
+    def test_load_chart(self, mock_apply_indicators, mock_load_daily_df, mock_load_daily_data):
+        """Test loading chart data."""
+        # Mock the data loading
+        mock_charts_df = pd.DataFrame({
+            'ticker': ['AAPL'],
+            'date': [datetime(2023, 1, 15)],
+            'volume': [1000]
+        })
+        mock_data_df = pd.DataFrame({
+            'ticker': ['AAPL'],
+            'date': [datetime(2023, 1, 15)],
+            'close': [150.0]
+        })
+        mock_chart_df = pd.DataFrame({
+            'date': [datetime(2023, 1, 15)],
+            'close': [150.0]
+        })
+        
+        mock_load_daily_df.side_effect = [mock_charts_df, mock_data_df]
+        mock_apply_indicators.return_value = mock_data_df
+        mock_load_daily_data.return_value = mock_chart_df
+        
+        charts_data = ChartsMinuteData("dict.feather", "data.feather")
+        charts_data.set_timeframe("5M")
+        
+        # Test loading chart
+        df, metadata = charts_data.load_chart(0)
+        
+        # Verify load_daily_data was called with correct parameters
+        mock_load_daily_data.assert_called_once_with('AAPL', datetime(2023, 1, 15), mock_data_df)
+        
+        # Verify returned data
+        pd.testing.assert_frame_equal(df, mock_chart_df)
+        expected_metadata = {
+            'ticker': 'AAPL',
+            'date_str': '2023-01-15',
+            'date': datetime(2023, 1, 15),
+            'timeframe': '5M',
+            'index': 0
+        }
+        assert metadata == expected_metadata
+
+    @patch('src.models.load_daily_data')
+    @patch('src.models.load_daily_df')
+    @patch('src.models.apply_indicators')
+    def test_load_chart_default_index(self, mock_apply_indicators, mock_load_daily_df, mock_load_daily_data):
+        """Test loading chart data with default index."""
+        # Mock the data loading
+        mock_charts_df = pd.DataFrame({
+            'ticker': ['AAPL', 'MSFT'],
+            'date': [datetime(2023, 1, 15), datetime(2023, 1, 16)],
+            'volume': [1000, 2000]
+        })
+        mock_data_df = pd.DataFrame({
+            'ticker': ['AAPL', 'MSFT'],
+            'date': [datetime(2023, 1, 15), datetime(2023, 1, 16)],
+            'close': [150.0, 250.0]
+        })
+        mock_chart_df = pd.DataFrame({
+            'date': [datetime(2023, 1, 16)],
+            'close': [250.0]
+        })
+        
+        mock_load_daily_df.side_effect = [mock_charts_df, mock_data_df]
+        mock_apply_indicators.return_value = mock_data_df
+        mock_load_daily_data.return_value = mock_chart_df
+        
+        charts_data = ChartsMinuteData("dict.feather", "data.feather")
+        charts_data.current_index = 1  # Set to second chart
+        
+        # Test loading chart without specifying index (should use current_index)
+        df, metadata = charts_data.load_chart()
+        
+        # Verify load_daily_data was called with current index data (index 1 is AAPL after sorting)
+        mock_load_daily_data.assert_called_once_with('AAPL', datetime(2023, 1, 15), mock_data_df)
+        
+        # Verify returned metadata uses current index
+        assert metadata['ticker'] == 'AAPL'
+        assert metadata['index'] == 1

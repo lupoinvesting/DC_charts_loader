@@ -106,3 +106,48 @@ class ChartsDailyData(ChartsData):
         date = metadata["date"]
         df = load_daily_data(ticker, date, self.data)
         return df, metadata
+
+
+class ChartsMinuteData(ChartsData):
+    def __init__(self, dict_filename, data_filename):
+        self.charts = pd.DataFrame()
+        self.current_index = 0
+        self.dict_filename = dict_filename
+        self.data_filename = data_filename
+        self.current_timeframe = "1M"
+        self.load_dict()
+        self.load_data()
+
+    def load_dict(self):
+        self.charts = load_daily_df(self.dict_filename)
+        self.charts.sort_values(by="date", ascending=False, inplace=True)
+
+    def load_data(self):
+        self.data = load_daily_df(self.data_filename)
+        self.data = apply_indicators(self.data)
+
+    def set_timeframe(self, timeframe: str):
+        """Set the current timeframe for display purposes."""
+        self.current_timeframe = timeframe
+
+    def get_metadata(self, index: int) -> dict:
+        ticker = self.charts.ticker.iloc[index]
+        date = self.charts.date.iloc[index]
+        return {
+            "ticker": ticker,
+            "date_str": date.strftime("%Y-%m-%d"),
+            "date": date,
+            "timeframe": self.current_timeframe,
+            "index": index,
+        }
+
+    def load_chart(self, index: Optional[int] = None) -> tuple[pd.DataFrame, dict]:
+        if index is None:
+            index = self.current_index
+
+        metadata = self.get_metadata(index)
+
+        ticker = metadata["ticker"]
+        date = metadata["date"]
+        df = load_daily_data(ticker, date, self.data)
+        return df, metadata
