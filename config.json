@@ -5,7 +5,7 @@
         "data_filename": "default.feather"
     },
     "chart": {
-        "use_intraday_tf": true,
+        "use_intraday_tf": false,
         "intraday_tf": "1m"
     },
     "indicators": [

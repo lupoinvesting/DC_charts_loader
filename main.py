@@ -10,10 +10,10 @@ if __name__ == "__main__":
     # dict_filename =
     data_filename = dict_filename.replace(".feather", "_data.feather")
     chart_data = ChartsDailyData(dict_filename, data_filename)
-    
+
     # Choose between single chart or dual chart grid
-    use_dual_chart = True  # Set to False for single chart
-    
+    use_dual_chart = config.chart.use_intraday_tf  # Set to False for single chart
+
     if use_dual_chart:
         chart = create_dual_chart_grid(chart_data)
     else:

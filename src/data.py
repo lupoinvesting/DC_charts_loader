@@ -48,6 +48,7 @@ def load_daily_df(dict_filename: str) -> pd.DataFrame:
     """
     df = pd.read_feather(dict_filename)
     df = df.drop_duplicates(subset=["ticker", "date"])
+    df.volume = df.volume.astype("int64")  # Ensure volume is int64
     df.sort_values(by=["ticker", "date"], inplace=True)
     df.reset_index(drop=True, inplace=True)
     return df
