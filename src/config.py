@@ -1,6 +1,6 @@
 import json
 from pydantic import BaseModel
-from typing import Optional, List, Dict
+from typing import Optional, List, Literal
 from pathlib import Path
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"
@@ -14,6 +14,11 @@ class GeneralValidator(BaseModel):
     version: str
     data_path: str
     data_filename: str
+
+
+class ChartValidator(BaseModel):
+    use_intraday_tf: bool
+    intraday_tf: Literal["1m", "5m", "30m", "1h", "4h"]
 
 
 class Indicator(BaseModel):
@@ -31,6 +36,7 @@ class Configuration(BaseModel):
     """
 
     general: GeneralValidator
+    chart: ChartValidator
     indicators: Optional[List[Indicator]]
 
 

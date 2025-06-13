@@ -4,6 +4,10 @@
         "data_path": "./data",
         "data_filename": "default.feather"
     },
+    "chart": {
+        "use_intraday_tf": true,
+        "intraday_tf": "1m"
+    },
     "indicators": [
         {
             "name": "SMA",
