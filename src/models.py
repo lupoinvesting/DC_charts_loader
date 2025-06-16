@@ -1,7 +1,13 @@
 from abc import ABC
 import pandas as pd
 from typing import Union, Optional
-from .data import load_daily_data, load_daily_df, apply_indicators
+from .data import (
+    load_daily_data,
+    load_daily_df,
+    apply_indicators,
+    load_min_data,
+    load_min_chart,
+)
 from lightweight_charts import Chart
 
 
@@ -114,7 +120,7 @@ class ChartsMinuteData(ChartsData):
         self.current_index = 0
         self.dict_filename = dict_filename
         self.data_filename = data_filename
-        self.current_timeframe = "1M"
+        self.current_timeframe = "1m"
         self.load_dict()
         self.load_data()
 
@@ -123,8 +129,9 @@ class ChartsMinuteData(ChartsData):
         self.charts.sort_values(by="date", ascending=False, inplace=True)
 
     def load_data(self):
-        self.data = load_daily_df(self.data_filename)
-        self.data = apply_indicators(self.data)
+        # self.data = load_daily_df(self.data_filename)
+        # self.data = apply_indicators(self.data)
+        self.data = load_min_data(self.data_filename)
 
     def set_timeframe(self, timeframe: str):
         """Set the current timeframe for display purposes."""
@@ -149,5 +156,5 @@ class ChartsMinuteData(ChartsData):
 
         ticker = metadata["ticker"]
         date = metadata["date"]
-        df = load_daily_data(ticker, date, self.data)
+        df = load_min_chart(ticker, date, self.data)
         return df, metadata

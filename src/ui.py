@@ -37,7 +37,7 @@ def plot_chart(df: pd.DataFrame, metadata: dict, chart: Chart) -> None:
         # Fallback to standard watermark (for regular Chart or subcharts)
         try:
             chart.watermark(
-                f"{metadata['ticker']} {metadata['timeframe']} {metadata['date_str']}"
+                f"{metadata['ticker']} {metadata['timeframe']} {metadata['date_str']}",
             )
         except:
             chart.watermark("na")
@@ -143,12 +143,12 @@ def on_timeframe_change(chart, chart_data, timeframe):
     chart._timeframe = timeframe
 
     # For ChartsMinuteData, update the timeframe setting
-    if hasattr(chart_data, 'set_timeframe'):
+    if hasattr(chart_data, "set_timeframe"):
         chart_data.set_timeframe(timeframe)
 
     # Reload current chart with new timeframe
     df, metadata = chart_data.load_chart(chart_data.current_index)
-    if not hasattr(chart_data, 'set_timeframe'):
+    if not hasattr(chart_data, "set_timeframe"):
         metadata["timeframe"] = timeframe
     plot_chart(df, metadata, chart)
 
@@ -197,7 +197,7 @@ def save_screenshot_dual(
 
 
 def create_dual_chart_grid(
-    chart_data1: ChartsData, chart_data2: Optional[ChartsData] = None
+    chart_data1: ChartsData, chart_data2: Optional[ChartsMinuteData] = None
 ) -> Chart:
     """
     Creates a grid of 2 charts side by side with timeframe switching and maximize/minimize functionality.
@@ -221,21 +221,22 @@ def create_dual_chart_grid(
     # Create minute data for right chart if not provided
     if chart_data2 is None:
         # Find the minute data file by replacing the data filename
-        if hasattr(chart_data1, 'data_filename'):
+        if hasattr(chart_data1, "data_filename"):
             base_path = os.path.dirname(chart_data1.data_filename)
             base_name = os.path.basename(chart_data1.data_filename)
             # Replace with _min.feather version
-            if base_name.endswith('.feather'):
-                min_filename = base_name.replace('.feather', '_min.feather')
+            if base_name.endswith(".feather"):
+                min_filename = base_name.replace("_data.feather", "_min_data.feather")
             else:
-                min_filename = base_name + '_min.feather'
+                min_filename = base_name + "_min_data.feather"
             min_data_path = os.path.join(base_path, min_filename)
-            
+
             # Create ChartsMinuteData instance
             chart_data2 = ChartsMinuteData(chart_data1.dict_filename, min_data_path)
         else:
-            # Fallback to same data if no data_filename attribute
-            chart_data2 = chart_data1
+            raise ValueError(
+                "chart_data1 must have a data_filename attribute to create minute data."
+            )
 
     # Create main chart (left side) using custom Chart class
     main_chart = Chart(inner_width=0.5, inner_height=1.0)
@@ -247,7 +248,7 @@ def create_dual_chart_grid(
     chart_data_list = [chart_data1, chart_data2]
 
     # Available timeframes
-    timeframes = ["1D", "4H", "1H", "15M", "5M", "1M"]
+    timeframes = ["1m", "5m", "15m", "1h", "1D", "4H", "1H", "15M", "5M", "1M"]
 
     # Setup each chart
     for i, (chart, chart_data) in enumerate(zip(charts, chart_data_list)):
@@ -271,7 +272,7 @@ def create_dual_chart_grid(
         )
 
         # Determine default timeframe based on chart data type
-        default_timeframe = "1M" if hasattr(chart_data, 'current_timeframe') else "1D"
+        default_timeframe = "1m" if hasattr(chart_data, "current_timeframe") else "1D"
 
         # Add timeframe selector
         chart.topbar.switcher(
