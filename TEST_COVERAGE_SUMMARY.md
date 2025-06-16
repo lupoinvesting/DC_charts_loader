@@ -1,50 +1,76 @@
 # Test Coverage Summary
 
 ## Overview
-Successfully added comprehensive unit tests to the DC Charts Loader repository, achieving **100% test coverage** across all source modules.
+Successfully added comprehensive unit tests to the DC Charts Loader repository, achieving **100% test coverage** across all source modules and comprehensive testing of main script files.
 
 ## Test Statistics
-- **Total Tests**: 56 test cases
-- **Test Files**: 4 test modules
-- **Code Coverage**: 100% (155/155 statements covered)
+- **Total Tests**: 105 test cases
+- **Test Files**: 9 test modules
+- **Code Coverage**: 100% (270/270 statements covered in src/)
 - **Test Framework**: pytest with pytest-cov
 
 ## Coverage by Module
 
 | Module | Statements | Coverage | Description |
 |--------|------------|----------|-------------|
-| `src/config.py` | 18 | 100% | Configuration management and validation |
-| `src/data.py` | 31 | 100% | Data loading and processing functions |
-| `src/models.py` | 58 | 100% | Chart data models and navigation logic |
-| `src/schemas.py` | 3 | 100% | Data validation schemas |
-| `src/ui.py` | 45 | 100% | User interface and chart plotting functions |
-| **Total** | **155** | **100%** | **Complete coverage** |
+| `src/config.py` | 22 | 100% | Configuration management and validation |
+| `src/data.py` | 32 | 100% | Data loading and processing functions |
+| `src/models.py` | 87 | 100% | Chart data models and navigation logic |
+| `src/schemas.py` | 5 | 100% | Data validation schemas |
+| `src/ui.py` | 124 | 100% | User interface and chart plotting functions |
+| **Total** | **270** | **100%** | **Complete coverage** |
 
 ## Test Structure
 
-### `tests/test_config.py` (14 tests)
+### Core Module Tests
+
+#### `tests/test_config.py` (16 tests)
 - **GeneralValidator**: Configuration validation tests
+- **ChartValidator**: Chart configuration validation tests
 - **Indicator**: Technical indicator configuration tests  
 - **Configuration**: Main configuration class tests
 - **ConfigurationLoading**: File loading and parsing tests
 
-### `tests/test_data.py` (12 tests)
+#### `tests/test_data.py` (12 tests)
 - **LoadDailyData**: Data filtering and date range tests
 - **LoadDailyDf**: File loading and data validation tests
 - **ApplyIndicators**: Technical indicator calculation tests
 
-### `tests/test_models.py` (17 tests)
+#### `tests/test_models.py` (22 tests)
 - **ChartsData**: Abstract base class navigation tests
 - **ChartsDailyData**: Concrete implementation tests
 - **ChartsWMOverride**: Custom chart watermark tests
+- **ChartsMinuteData**: Minute data handling tests
 
-### `tests/test_ui.py` (13 tests)
+#### `tests/test_ui.py` (26 tests)
 - **PlotChart**: Chart plotting and error handling tests
 - **PlotLine**: Line plotting tests
 - **NavigationFunctions**: Chart navigation tests
 - **PlotIndicators**: Indicator plotting tests
 - **SaveScreenshot**: Screenshot functionality tests
 - **CreateAndBindChart**: Chart creation and hotkey binding tests
+- **DualChartFunctions**: Dual chart navigation and screenshot tests
+- **CreateDualChartGrid**: Dual chart grid creation tests
+
+### Script Testing
+
+#### `tests/test_main.py` (4 tests)
+- **MainScript**: Main script logic and structure validation
+
+#### `tests/test_demo_dual_charts.py` (4 tests)
+- **DemoDualCharts**: Demo script functionality and structure tests
+
+#### `tests/test_demo_dual_charts_minute.py` (5 tests)
+- **DemoDualChartsMinute**: Minute data demo script tests
+
+#### `tests/test_example_dual_charts.py` (6 tests)
+- **ExampleDualCharts**: Example script functionality tests
+
+#### `tests/test_script_coverage.py` (5 tests)
+- **ScriptCoverage**: Comprehensive script execution coverage tests
+
+#### `tests/test_script_execution.py` (5 tests)
+- **ScriptExecution**: Script validation and execution simulation tests
 
 ## Key Testing Features
 
@@ -53,6 +79,8 @@ Successfully added comprehensive unit tests to the DC Charts Loader repository, 
 - **Configuration Management**: Pydantic model validation and file loading
 - **Error Handling**: Edge cases and exception scenarios
 - **UI Components**: Chart plotting and user interaction functions
+- **Script Validation**: Main script files structure and logic testing
+- **Dual Chart Functionality**: Complete testing of dual chart grid features
 
 ### Testing Techniques
 - **Mock-based Testing**: External dependencies properly mocked
