@@ -1,6 +1,5 @@
 add marking for setup
 
-add indicators (SMA5)
-
-
-add config.json
+Dual charts
+    Screenshot should save both charts in same image
+    Add support for minute data

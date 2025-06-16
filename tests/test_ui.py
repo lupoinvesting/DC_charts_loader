@@ -3,7 +3,22 @@ import pandas as pd
 from datetime import datetime
 from unittest.mock import Mock, patch, MagicMock, mock_open
 
-from src.ui import plot_chart, plot_line, on_up, on_down, plot_indicators
+from src.ui import (
+    plot_chart,
+    plot_line,
+    on_up,
+    on_down,
+    plot_indicators,
+    on_maximize,
+    on_timeframe_change,
+    on_up_dual,
+    on_down_dual,
+    save_screenshot_dual,
+    create_dual_chart_grid,
+    save_screenshot,
+    create_and_bind_chart,
+)
+from src.models import ChartsMinuteData
 
 
 class TestPlotChart:
@@ -42,6 +57,9 @@ class TestPlotChart:
         """Test chart plotting when watermark raises AttributeError."""
         # Create mock chart that raises AttributeError on first call, succeeds on second
         mock_chart = Mock()
+        mock_chart.watermark = Mock(
+            side_effect=[TypeError("Custom watermark not available"), None]
+        )
         mock_chart.watermark = Mock(
             side_effect=[AttributeError("Custom watermark not available"), None]
         )
