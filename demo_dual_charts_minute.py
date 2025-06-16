@@ -12,6 +12,7 @@ This script demonstrates:
 from src.models import ChartsDailyData
 from src.ui import create_dual_chart_grid
 import numpy
+import pandas as pd
 
 
 def main():
