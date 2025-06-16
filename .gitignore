@@ -36,4 +36,4 @@ config.json
 todo.md
 
 # test files
-.coverage
+*.coverage
