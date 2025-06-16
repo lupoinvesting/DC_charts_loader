@@ -34,3 +34,6 @@ Thumbs.db
 # config files
 config.json
 todo.md
+
+# test files
+.coverage

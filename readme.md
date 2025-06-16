@@ -44,16 +44,13 @@ python demo_dual_charts.py
 For detailed documentation, see [DUAL_CHARTS_README.md](DUAL_CHARTS_README.md)
 
 ## CONTROLLING THE CHARTS
+shift + 1 -> next chart
+shift + 2 -> previous chart
+shift + s -> screenshot
 
-### Single Chart Mode:
-- shift + 1 -> next chart
-- shift + 2 -> previous chart
-- shift + s -> screenshot
 
-### Dual Chart Mode:
-- shift + 1 -> next chart (both charts)
-- shift + 2 -> previous chart (both charts)
-- shift + s -> screenshot both charts
-- Click ⬜ button -> maximize chart
-- Click × button -> restore side-by-side view
-- Use timeframe dropdown -> switch timeframe for individual chart
+## TESTING
+test with pytest:
+```bash
+python -m pytest --cov
+```

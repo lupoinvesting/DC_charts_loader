@@ -49,11 +49,12 @@ def plot_chart(df: pd.DataFrame, metadata: dict, chart: Chart) -> None:
         font_size=12,
         percent=False,
     )
+    chart.price_line(line_visible=False)
 
 
 def plot_line(data: pd.DataFrame, chart: Chart, name: str) -> None:
 
-    line = chart.create_line(name=name)
+    line = chart.create_line(name=name, price_line=False)
     line.set(data)
 
 
