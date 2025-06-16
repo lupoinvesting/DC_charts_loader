@@ -127,5 +127,8 @@ def format_min_chart_data(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Formatted DataFrame with 'time' as string and 'datetime' as index.
     """
     df["time"] = df["datetime"].dt.strftime("%Y-%m-%d %H:%M:%S")
-    df.drop(columns=["datetime", "_date"], inplace=True)
+    columns_to_drop = ["datetime"]
+    if "_date" in df.columns:
+        columns_to_drop.append("_date")
+    df.drop(columns=columns_to_drop, inplace=True)
     return df

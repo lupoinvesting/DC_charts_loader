@@ -13,6 +13,7 @@ from tests.fixtures.sample_data import (
     create_sample_config_data,
     create_sample_charts_data,
     create_sample_indicator_data,
+    create_sample_min_data,
     SAMPLE_STOCK_DATA,
     SAMPLE_CONFIG_DATA,
     SAMPLE_CHARTS_DATA
@@ -204,3 +205,89 @@ def disable_warnings():
 def _disable_warnings(disable_warnings):
     """Auto-apply warning suppression to all tests."""
     pass
+
+
+@pytest.fixture
+def sample_min_data():
+    """Fixture providing sample minute data."""
+    return create_sample_min_data()
+
+
+@pytest.fixture
+def sample_min_data_raw():
+    """Fixture providing raw sample minute data with datetime and _date columns."""
+    data = create_sample_min_data()
+    # Add _date column for testing format_min_chart_data
+    data['_date'] = pd.to_datetime(data['datetime'].dt.date)
+    return data
+
+
+@pytest.fixture
+def temp_min_feather_file():
+    """Fixture providing a temporary feather file with minute data."""
+    with tempfile.NamedTemporaryFile(suffix='.feather', delete=False) as tmp_file:
+        # Create minute data with timezone-aware datetime
+        data = pd.DataFrame({
+            'ticker': ['AAPL'] * 5 + ['MSFT'] * 5,
+            'datetime': pd.date_range('2023-01-15 09:30:00', periods=10, freq='1min', tz='UTC'),
+            'date': pd.date_range('2023-01-15', periods=10, freq='1min'),
+            'open': pd.array([150.0, 150.1, 150.2, 150.3, 150.4, 250.0, 250.1, 250.2, 250.3, 250.4], dtype='float32'),
+            'high': pd.array([150.5, 150.6, 150.7, 150.8, 150.9, 250.5, 250.6, 250.7, 250.8, 250.9], dtype='float32'),
+            'low': pd.array([149.5, 149.6, 149.7, 149.8, 149.9, 249.5, 249.6, 249.7, 249.8, 249.9], dtype='float32'),
+            'close': pd.array([150.2, 150.3, 150.4, 150.5, 150.6, 250.2, 250.3, 250.4, 250.5, 250.6], dtype='float32'),
+            'volume': pd.array([1000, 1100, 1200, 1300, 1400, 2000, 2100, 2200, 2300, 2400], dtype='int32')
+        })
+        data.to_feather(tmp_file.name)
+        yield tmp_file.name
+    
+    # Cleanup
+    Path(tmp_file.name).unlink(missing_ok=True)
+
+
+@pytest.fixture
+def temp_min_feather_file_with_tz():
+    """Fixture providing a temporary feather file with timezone-aware minute data."""
+    with tempfile.NamedTemporaryFile(suffix='.feather', delete=False) as tmp_file:
+        # Create minute data with timezone-aware datetime
+        data = pd.DataFrame({
+            'ticker': ['AAPL'] * 3,
+            'datetime': pd.date_range('2023-01-15 09:30:00', periods=3, freq='1min', tz='America/New_York'),
+            'date': pd.date_range('2023-01-15', periods=3, freq='1min'),
+            'open': pd.array([150.0, 150.1, 150.2], dtype='float32'),
+            'high': pd.array([150.5, 150.6, 150.7], dtype='float32'),
+            'low': pd.array([149.5, 149.6, 149.7], dtype='float32'),
+            'close': pd.array([150.2, 150.3, 150.4], dtype='float32'),
+            'volume': pd.array([1000, 1100, 1200], dtype='int32')
+        })
+        data.to_feather(tmp_file.name)
+        yield tmp_file.name
+    
+    # Cleanup
+    Path(tmp_file.name).unlink(missing_ok=True)
+
+
+@pytest.fixture
+def temp_min_feather_file_unsorted_min():
+    """Fixture providing a temporary feather file with unsorted minute data."""
+    with tempfile.NamedTemporaryFile(suffix='.feather', delete=False) as tmp_file:
+        # Create unsorted minute data
+        data = pd.DataFrame({
+            'ticker': ['MSFT', 'AAPL', 'MSFT', 'AAPL'],
+            'datetime': pd.to_datetime([
+                '2023-01-15 09:32:00',
+                '2023-01-15 09:32:00', 
+                '2023-01-15 09:30:00',
+                '2023-01-15 09:30:00'
+            ]),
+            'date': pd.to_datetime(['2023-01-15'] * 4),
+            'open': pd.array([250.1, 150.1, 250.0, 150.0], dtype='float32'),
+            'high': pd.array([250.6, 150.6, 250.5, 150.5], dtype='float32'),
+            'low': pd.array([249.6, 149.6, 249.5, 149.5], dtype='float32'),
+            'close': pd.array([250.3, 150.3, 250.2, 150.2], dtype='float32'),
+            'volume': pd.array([2100, 1100, 2000, 1000], dtype='int32')
+        })
+        data.to_feather(tmp_file.name)
+        yield tmp_file.name
+    
+    # Cleanup
+    Path(tmp_file.name).unlink(missing_ok=True)

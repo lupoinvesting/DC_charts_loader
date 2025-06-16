@@ -164,6 +164,69 @@ def create_sample_indicator_data(
     return df
 
 
+def create_sample_min_data(
+    tickers: list = None,
+    start_datetime: str = "2023-01-15 09:30:00",
+    periods: int = 100,
+    freq: str = "1min",
+    seed: int = 42,
+) -> pd.DataFrame:
+    """
+    Create sample minute-level stock data for testing.
+
+    Args:
+        tickers: List of ticker symbols. Defaults to ['AAPL', 'MSFT']
+        start_datetime: Start datetime for the data
+        periods: Number of minutes of data to generate
+        freq: Frequency of data (e.g., '1min', '5min')
+        seed: Random seed for reproducible data
+
+    Returns:
+        DataFrame with minute-level stock data
+    """
+    if tickers is None:
+        tickers = ["AAPL", "MSFT"]
+
+    np.random.seed(seed)
+    datetimes = pd.date_range(start_datetime, periods=periods, freq=freq)
+
+    data = []
+    for ticker in tickers:
+        # Generate realistic stock prices
+        base_price = np.random.uniform(100, 300)
+        prices = []
+        current_price = base_price
+
+        for _ in range(periods):
+            # Random walk with smaller changes for minute data
+            change = np.random.normal(0.0001, 0.005)  # Smaller volatility for minute data
+            current_price *= 1 + change
+            prices.append(current_price)
+
+        for i, dt in enumerate(datetimes):
+            price = prices[i]
+            # Generate OHLC data
+            high = price * np.random.uniform(1.0, 1.01)
+            low = price * np.random.uniform(0.99, 1.0)
+            open_price = np.random.uniform(low, high)
+            close_price = price
+            volume = np.random.randint(100, 10000)
+
+            data.append(
+                {
+                    "ticker": ticker,
+                    "datetime": dt,
+                    "open": np.float32(open_price),
+                    "high": np.float32(high),
+                    "low": np.float32(low),
+                    "close": np.float32(close_price),
+                    "volume": np.int32(volume),
+                }
+            )
+
+    return pd.DataFrame(data)
+
+
 # Pre-defined sample datasets for common test scenarios
 SAMPLE_STOCK_DATA = create_sample_stock_data()
 SAMPLE_CONFIG_DATA = create_sample_config_data()
